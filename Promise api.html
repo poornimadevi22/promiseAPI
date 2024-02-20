@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Promise API</title>
+</head>
+
+<body>
+
+  <script src="https://app.zenclass.in/sheets/v1/js/zen/suite/bundle.js"></script>
+
+
+  <p>Heloo World!!!</p>
+  <form action="POST">
+    <input type="text" name="author" class="text" id="author">
+    <button type="button" onclick={submitForm} id="submitBtn">Submit</button>
+    <button type="button" onclick={getPokemon} id="result">Get Pokemon list</button>
+   <button type="button" onclick={getCountries} id="country">Rest Countries</button> 
+
+
+
+  </form>
+  <script>
+
+
+    let content = '';
+    let url = [
+    
+      'https://openlibrary.org/search/authors.json?q=',
+      "https://pokeapi.co/api/v2/pokemon?limit=100&offset=0",
+       "https://restcountries.com/v3.1/independent?status=true&fields=languages,capital"
+
+    ]
+    function submitForm() {
+      console.log(document.getElementById('author'))
+      return new Promise((resolve, reject) => {
+        fetch(url[0] + document.getElementById('author').value)
+          .then(response => response.json())
+          .then(resolve)
+          .catch(reject);
+      })
+
+    }
+    document.getElementById('submitBtn').addEventListener('click', function () {
+      submitForm().then((data) => {
+        // data.map((f)=>{
+          document.getElementById('tableBody').innerHTML=""
+        console.log("f", data)
+        // })
+        for (let index = 0; index < data.docs.length; index++) {
+          const element = data.docs[index];
+          console.log(element)
+          document.getElementById('tableBody').innerHTML += `<tr><td>${data.docs[index].name}</td><td>${data.docs[index].name}</td></tr>`
+
+        }
+      });
+});
+
+
+    async function getPokemon(){
+      let data= await fetch(url[1])
+      .catch(err=>{
+        console.log(err)
+      })
+      return data.json();
+    }
+    document.getElementById("result").addEventListener("click",()=>{
+      document.getElementById('tableBody').innerHTML=""
+        getPokemon().then(data=>{
+          console.log("ff",data)
+          document.getElementById('heading1').innerText="Name"
+          document.getElementById('heading2').innerText="Url"
+    for(let i=0;i<data.results.length;i++){
+      document.getElementById('tableBody').innerHTML += `<tr><td>${data.results[i].name}</td><td>${data.results[i].url}</td></tr>`
+
+    }
+        })
+})
+
+
+  function getCountries(){
+    return new Promise((resolve,reject)=>{
+      fetch(url[2]+ document.getElementById("country").value)
+      .then(response=>response.json())
+      .then(resolve)
+      .catch(reject);
+  
+    })
+  }
+  document.getElementById('country').addEventListener('click',  ()=> {
+      getCountries().then((datas) => {
+        console.log("f", datas);
+        document.getElementById('tableBody').innerHTML=""
+        document.getElementById("heading1").innerText="Capital";
+        document.getElementById("heading2").innerText="Languages";
+        for(var a=0;a<datas.length;a++){
+           document.getElementById("tableBody").innerHTML += `<tr><td>${datas[a].capital}</td><td>${Object.values(datas[a].languages).toString()}</td></tr>`
+        }
+      }) })
+    
+
+  </script>
+
+  <p>welcome to Promise API</p>
+
+  <table>
+    <thead name="Name">
+      <td id="heading1">Name</td>
+      <td id="heading2">Name1</td>
+    </thead>
+    <tbody id="tableBody">
+      <!-- <tr>
+     
+    <td>edit</td>
+    <td>edit</td>
+    </tr>
+    <tr>
+     
+      <td>edit</td>
+      <td>edit</td>
+      </tr> -->
+
+
+    </tbody>
+  </table>
+</body>
+
+<style>
+  table,th,td,tr{
+    border:1px solid gray;
+  }
+
+  thead{
+    font-weight: bolder;
+  }
+</style>
+
+</html>
